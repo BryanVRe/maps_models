@@ -4,7 +4,7 @@ import requests
 SERVER_URL = 'https://map-model-service-bryanvre.cloud.okteto.net/v1/models/wait-time-model:predict'
 
 def make_prediction(inputs):
-    predict_request = {'instances': inputs}
+    predict_request = {'instances': [inputs]}
     response = requests.post(SERVER_URL, json=predict_request)
     
     if response.status_code == 200:
@@ -34,9 +34,7 @@ def main():
             st.error("Por favor, ingresa tiempos de espera válidos en minutos.")
             return
 
-        inputs = [
-            [cliente1, cliente2]
-        ]
+        inputs = [cliente1, cliente2]
         prediction = make_prediction(inputs)
 
         if prediction:
