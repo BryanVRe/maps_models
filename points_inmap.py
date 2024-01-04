@@ -12,7 +12,10 @@ def circulo(num_datos=500000, R=1, centro_lat=0, centro_lon=0):
     # Genera valores positivos para el radio utilizando una distribución normal
     r_positive = np.abs(R * np.sqrt(np.random.normal(0, 1, size=num_datos)**2))
 
-    # Calcula las coordenadas x e y en base a coordenadas polares
+    # Genera un tercer número aleatorio
+    z = np.random.uniform(0, 1, size=num_datos)
+
+    # Calcula las coordenadas x, y, y z en base a coordenadas polares
     x = np.cos(theta) * r_positive + centro_lon
     y = np.sin(theta) * r_positive + centro_lat
 
@@ -21,7 +24,7 @@ def circulo(num_datos=500000, R=1, centro_lat=0, centro_lon=0):
     y = np.round(y, 6)
 
     # Crea un DataFrame con las coordenadas
-    df = pd.DataFrame({'lat': y, 'lon': x})
+    df = pd.DataFrame({'lat': y, 'lon': x, 'z': z})
     return df
 
 # Modifica los datos generados para que uno esté cerca de cero y el otro cerca de uno
@@ -45,7 +48,7 @@ tf.keras.backend.clear_session()
 
 # Define un modelo de red neuronal con capas densas
 linear_model = tf.keras.models.Sequential([
-    tf.keras.layers.Dense(units=2, input_shape=[2], activation='relu', name='Dense_2_4'),
+    tf.keras.layers.Dense(units=2, input_shape=[3], activation='relu', name='Dense_3_4'),
     tf.keras.layers.Dense(units=4, activation='relu', name='Dense_4_8'),
     tf.keras.layers.Dense(units=8, activation='relu', name='Dense_8_1'),
     tf.keras.layers.Dense(units=1, activation='sigmoid', name='Output')
@@ -65,12 +68,12 @@ export_path = 'map-model/1/'  # Cambia el número del modelo si es necesario
 tf.saved_model.save(linear_model, os.path.join('./', export_path))
 
 # Puntos GPS para Kazajistán y Brasilia
-gps_points_kazakhstan = [[66.9237, 48.0196], [66.5, 48.2], [67.0, 47.8], [67.2, 48.5], [66.8, 47.9]]
-gps_points_brasilia = [[-47.9292, -15.7801], [-48.0, -15.7], [-47.8, -15.9], [-48.1, -15.6], [-47.7, -15.8]]
+gps_points_kazakhstan = [[66.9237, 48.0196, 0.5], [66.5, 48.2, 0.3], [67.0, 47.8, 0.8], [67.2, 48.5, 0.6], [66.8, 47.9, 0.2]]
+gps_points_brasilia = [[-47.9292, -15.7801, 0.7], [-48.0, -15.7, 0.4], [-47.8, -15.9, 0.9], [-48.1, -15.6, 0.1], [-47.7, -15.8, 0.6]]
 
 # Extrae predicciones para Kazajistán y Brasilia
-predictions_kazakhstan = linear_model.predict(gps_points_kazakhstan).tolist()
-predictions_brasilia = linear_model.predict(gps_points_brasilia).tolist()
+predictions_kazakhstan = linear_model.predict(np.array(gps_points_kazakhstan)).tolist()
+predictions_brasilia = linear_model.predict(np.array(gps_points_brasilia)).tolist()
 
 # Imprime las predicciones
 print("\nPredictions for Kazakhstan:")
