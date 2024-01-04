@@ -1,7 +1,7 @@
 import streamlit as st
 import requests
 
-SERVER_URL = 'https://map-model-service-bryanvre.cloud.okteto.net/v1/models/map-model:predict'
+SERVER_URL = 'https://map-model-service-bryanvre.cloud.okteto.net/v1/models/wait-time-model:predict'
 
 def make_prediction(inputs):
     predict_request = {'instances': inputs}
@@ -16,31 +16,27 @@ def make_prediction(inputs):
         return None
 
 def display_predictions(prediction):
-    # Actualiza esta parte en función de la estructura específica de la respuesta del modelo
-    # Asumiendo que la estructura es algo como prediction['outputs'][0]['nombre_de_la_capa']
-    result = prediction['outputs'][0]['nombre_de_la_capa']
-    st.write(f"\nEl número mayor es: {result}")
+    result = prediction['outputs'][0]['dense_1']
+    st.write(f"\nEl tiempo de espera estimado es: {result} minutos")
 
 def main():
-    st.title('Predictor del Número Mayor')
+    st.title('Predictor de Tiempo de Espera')
 
-    st.header('Ingresar 3 Números')
+    st.header('Ingresar Tiempo de Espera de Clientes Anteriores')
 
-    num1 = st.text_input('Número 1', value='0.0')
-    num2 = st.text_input('Número 2', value='0.0')
-    num3 = st.text_input('Número 3', value='0.0')
+    cliente1 = st.text_input('Cliente 1 (minutos)', value='0')
+    cliente2 = st.text_input('Cliente 2 (minutos)', value='0')
 
     if st.button('Predecir'):
         try:
-            num1 = float(num1)
-            num2 = float(num2)
-            num3 = float(num3)
+            cliente1 = float(cliente1)
+            cliente2 = float(cliente2)
         except ValueError:
-            st.error("Por favor, ingresa números válidos.")
+            st.error("Por favor, ingresa tiempos de espera válidos en minutos.")
             return
 
         inputs = [
-            [num1, num2, num3]
+            [cliente1, cliente2]
         ]
         prediction = make_prediction(inputs)
 
@@ -49,4 +45,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
