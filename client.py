@@ -15,7 +15,7 @@ def make_prediction(inputs):
         return None
 
 def display_predictions(prediction):
-    result = prediction['predictions'][0]
+    result = prediction['predictions'][0]['dense_1']
     st.write(f"\nEl tiempo de espera estimado es: {result} minutos")
 
 def main():
