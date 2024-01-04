@@ -1,7 +1,7 @@
 import streamlit as st
 import requests
 
-SERVER_URL = 'https://map-model-service-bryanvre.cloud.okteto.net/v1/models/wait-time-model:predict'
+SERVER_URL = 'https://map-model-service-bryanvre.cloud.okteto.net/v1/models/map-model:predict'
 
 def make_prediction(inputs):
     predict_request = {'instances': [inputs]}
