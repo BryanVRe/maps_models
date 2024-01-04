@@ -21,9 +21,9 @@ datos_sucursal = tiempos_espera(num_datos=200, media=20, desviacion=7)
 # Dividir el conjunto de datos en entrenamiento, prueba y validación
 train_end = int(0.6 * len(datos_sucursal))
 test_start = int(0.8 * len(datos_sucursal))
-X_train, y_train = datos_sucursal.index.values[:train_end], datos_sucursal['tiempo_espera'][:train_end]
-X_test, y_test = datos_sucursal.index.values[test_start:], datos_sucursal['tiempo_espera'][test_start:]
-X_val, y_val = datos_sucursal.index.values[train_end:test_start], datos_sucursal['tiempo_espera'][train_end:test_start]
+X_train, y_train = datos_sucursal.index.values[:train_end], datos_sucursal['tiempo_espera'][:train_end].values
+X_test, y_test = datos_sucursal.index.values[test_start:], datos_sucursal['tiempo_espera'][test_start:].values
+X_val, y_val = datos_sucursal.index.values[train_end:test_start], datos_sucursal['tiempo_espera'][train_end:test_start].values
 
 # Limpia cualquier modelo o capa previamente definida en TensorFlow
 tf.keras.backend.clear_session()
@@ -48,3 +48,4 @@ linear_model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=300)
 # Guarda el modelo entrenado en el directorio 'linear-model/1/'
 export_path = 'wait-time-model/1/'  # Cambia el número del modelo si es necesario
 tf.saved_model.save(linear_model, os.path.join('./', export_path))
+
