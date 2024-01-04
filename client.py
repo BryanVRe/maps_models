@@ -3,6 +3,11 @@ import requests
 
 SERVER_URL = 'https://map-model-service-bryanvre.cloud.okteto.net/v1/models/map-model:predict'
 
+import streamlit as st
+import requests
+
+SERVER_URL = 'https://map-model-service-bryanvre.cloud.okteto.net/v1/models/map-model:predict'
+
 def make_prediction(inputs):
     predict_request = {'instances': inputs}
     response = requests.post(SERVER_URL, json=predict_request)
@@ -16,39 +21,33 @@ def make_prediction(inputs):
 
 def display_predictions(predictions, location_name):
     st.write(f"\nPredicciones para {location_name}:")
-    for i, pred in enumerate(predictions):
-        st.write(f"Predicción {i + 1}: {pred}")
+    st.write(f"Mayor valor: {predictions[0]}")
 
 def main():
-    st.title('Predictor de Ubicaciones Geográficas')
+    st.title('Predictor de Números')
 
-    st.header('Coordenadas para Kazajistán')
-    kazakhstan_lat = st.text_input('Latitud de Kazajistán', value='48.0196')
-    kazakhstan_lon = st.text_input('Longitud de Kazajistán', value='66.9237')
+    st.header('Ingresar 3 Números')
 
-    st.header('Coordenadas para Brasilia')
-    brasilia_lat = st.text_input('Latitud de Brasilia', value='-15.7801')
-    brasilia_lon = st.text_input('Longitud de Brasilia', value='-47.9292')
+    num1 = st.text_input('Número 1', value='0.0')
+    num2 = st.text_input('Número 2', value='0.0')
+    num3 = st.text_input('Número 3', value='0.0')
 
     if st.button('Predecir'):
         try:
-            kazakhstan_lat = float(kazakhstan_lat)
-            kazakhstan_lon = float(kazakhstan_lon)
-            brasilia_lat = float(brasilia_lat)
-            brasilia_lon = float(brasilia_lon)
+            num1 = float(num1)
+            num2 = float(num2)
+            num3 = float(num3)
         except ValueError:
-            st.error("Por favor, ingresa coordenadas válidas.")
+            st.error("Por favor, ingresa números válidos.")
             return
 
         inputs = [
-            [kazakhstan_lon, kazakhstan_lat],
-            [brasilia_lon, brasilia_lat]
+            [num1, num2, num3]
         ]
         predictions = make_prediction(inputs)
 
         if predictions:
-            display_predictions(predictions['predictions'][0], "Kazajistán")
-            display_predictions(predictions['predictions'][1], "Brasilia")
+            display_predictions(predictions['predictions'][0], "Resultados")
 
 if __name__ == '__main__':
     main()
