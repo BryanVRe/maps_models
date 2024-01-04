@@ -3,11 +3,6 @@ import requests
 
 SERVER_URL = 'https://map-model-service-bryanvre.cloud.okteto.net/v1/models/map-model:predict'
 
-import streamlit as st
-import requests
-
-SERVER_URL = 'https://map-model-service-bryanvre.cloud.okteto.net/v1/models/map-model:predict'
-
 def make_prediction(inputs):
     predict_request = {'instances': inputs}
     response = requests.post(SERVER_URL, json=predict_request)
@@ -19,16 +14,38 @@ def make_prediction(inputs):
         st.error("Error al obtener predicciones. Por favor, verifica tus datos e intenta nuevamente.")
         return None
 
-def display_predictions(predictions, location_name):
-    st.write(f"\nPredicciones para {location_name}:")
-    st.write(f"Mayor valor: {predictions[0]}")
+def display_predictions(prediction):
+    st.write(f"\nEl número mayor es: {prediction}")
 
 def main():
-    st.title('Predictor de Números')
+    st.title('Predictor del Número Mayor')
 
     st.header('Ingresar 3 Números')
 
     num1 = st.text_input('Número 1', value='0.0')
+    num2 = st.text_input('Número 2', value='0.0')
+    num3 = st.text_input('Número 3', value='0.0')
+
+    if st.button('Predecir'):
+        try:
+            num1 = float(num1)
+            num2 = float(num2)
+            num3 = float(num3)
+        except ValueError:
+            st.error("Por favor, ingresa números válidos.")
+            return
+
+        inputs = [
+            [num1, num2, num3]
+        ]
+        prediction = make_prediction(inputs)
+
+        if prediction:
+            display_predictions(prediction['predictions'][0])
+
+if __name__ == '__main__':
+    main()
+
     num2 = st.text_input('Número 2', value='0.0')
     num3 = st.text_input('Número 3', value='0.0')
 
