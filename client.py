@@ -4,7 +4,7 @@ import requests
 SERVER_URL = 'https://map-model-service-bryanvre.cloud.okteto.net/v1/models/map-model:predict'
 
 def make_prediction(inputs):
-    predict_request = {'instances': [inputs]}
+    predict_request = {'instances': inputs}
     response = requests.post(SERVER_URL, json=predict_request)
     
     if response.status_code == 200:
@@ -14,31 +14,41 @@ def make_prediction(inputs):
         st.error("Error al obtener predicciones. Por favor, verifica tus datos e intenta nuevamente.")
         return None
 
-def display_predictions(prediction):
-    result = prediction['predictions'][0]['dense_1']
-    st.write(f"\nEl tiempo de espera estimado es: {result} minutos")
+def display_predictions(predictions, location_name):
+    st.write(f"\nPredicciones para {location_name}:")
+    for i, pred in enumerate(predictions):
+        st.write(f"Predicción {i + 1}: {pred}")
 
 def main():
-    st.title('Predictor de Tiempo de Espera')
+    st.title('Predictor de Ubicaciones Geográficas')
 
-    st.header('Ingresar Tiempo de Espera de Clientes Anteriores')
+    st.header('Coordenadas para Kazajistán')
+    kazakhstan_lat = st.text_input('Latitud de Kazajistán', value='48.0196')
+    kazakhstan_lon = st.text_input('Longitud de Kazajistán', value='66.9237')
 
-    cliente1 = st.text_input('Cliente 1 (minutos)', value='0')
-    cliente2 = st.text_input('Cliente 2 (minutos)', value='0')
+    st.header('Coordenadas para Brasilia')
+    brasilia_lat = st.text_input('Latitud de Brasilia', value='-15.7801')
+    brasilia_lon = st.text_input('Longitud de Brasilia', value='-47.9292')
 
     if st.button('Predecir'):
         try:
-            cliente1 = float(cliente1)
-            cliente2 = float(cliente2)
+            kazakhstan_lat = float(kazakhstan_lat)
+            kazakhstan_lon = float(kazakhstan_lon)
+            brasilia_lat = float(brasilia_lat)
+            brasilia_lon = float(brasilia_lon)
         except ValueError:
-            st.error("Por favor, ingresa tiempos de espera válidos en minutos.")
+            st.error("Por favor, ingresa coordenadas válidas.")
             return
 
-        inputs = [cliente1, cliente2]
-        prediction = make_prediction(inputs)
+        inputs = [
+            [kazakhstan_lon, kazakhstan_lat],
+            [brasilia_lon, brasilia_lat]
+        ]
+        predictions = make_prediction(inputs)
 
-        if prediction:
-            display_predictions(prediction)
+        if predictions:
+            display_predictions(predictions['predictions'][0], "Kazajistán")
+            display_predictions(predictions['predictions'][1], "Brasilia")
 
-if __name__ == '__main__':
+if _name_ == '_main_':
     main()
