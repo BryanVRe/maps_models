@@ -50,5 +50,5 @@ def main():
             display_predictions(predictions['predictions'][0], "Kazajistán")
             display_predictions(predictions['predictions'][1], "Brasilia")
 
-if _name_ == '_main_':
+if _name_ == '__main__':
     main()
